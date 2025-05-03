@@ -1,0 +1,18 @@
+detect:  # 检测哪些内容来判断
+  move-rotation: true  # 检测视角移动
+  move-position: true  # 检测水平位置移动（可能误判）
+  chat: true  # 发送聊天
+  command: true  # 发送指令
+  inventory: true  # 交互容器/打开背包
+  mouse-click: true  # 检测鼠标点击
+
+move-sensitivity: 0.1  # 水平位移的灵敏度
+
+afk-check-interval: 300  # AFK检测间隔（秒）
+afk-placeholder: "&o&8[AFK]"  # %isAFK%占位符显示内容
+afk-god-mode: true  # 玩家AFK时是否无敌
+
+msg-afk-self: "&e你挂机了。"
+msg-afk-broadcast: "&7%player% 挂机了。"
+msg-back-self: "&a欢迎回来！"
+msg-back-broadcast: "&7%player% 回来了。"

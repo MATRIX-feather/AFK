@@ -1,0 +1,22 @@
+name: AFK
+version: 1.0
+main: com.aFK.AFK
+api-version: '1.21'
+author: AFK
+folia-supported: true
+depend:
+  - PlaceholderAPI
+
+commands:
+  afk:
+    description: 切换玩家的AFK状态
+    usage: /afk
+  afkreload:
+    description: 重载插件配置
+    usage: /afkreload
+    permission: afk.reload
+
+permissions:
+  afk.reload:
+    description: 允许玩家使用重载配置指令
+    default: op
