@@ -18,9 +18,13 @@ Currently implemented features:
  - AFK玩家前缀   - AFK prefix
     
 
- - AFK玩家视距调整以节省资源   - AFK players adjust viewdistance to save resources  
+ - AFK玩家视距调整以节省资源   - AFK players adjust viewdistance to save resources
+   
+
+ - 完善中：AFK玩家暂停发包
     
 
- - 自定义消息   - Customized messages  
+ - 自定义消息   - Customized messages
+
   
 WIKI(To be updated待更新):https://github.com/Tacocat-i/AFK-for-Folia/wiki
