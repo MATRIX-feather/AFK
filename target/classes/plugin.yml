@@ -6,17 +6,25 @@ author: AFK
 folia-supported: true
 depend:
   - PlaceholderAPI
+  - ProtocolLib
 
 commands:
   afk:
     description: 切换玩家的AFK状态
     usage: /afk
+    permission: afk.command.afk
   afkreload:
     description: 重载插件配置
     usage: /afkreload
-    permission: afk.reload
+    permission: afk.command.reload
 
 permissions:
-  afk.reload:
-    description: 允许玩家使用重载配置指令
+  afk.command.afk:
+    description: Allows the player to use the /afk command
+    default: true
+  afk.command.reload:
+    description: Allows the player to use the /afkreload command
     default: op
+  afk.bypass:
+    description: Allows the player to bypass AFK detection
+    default: false

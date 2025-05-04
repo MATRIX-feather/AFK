@@ -1,5 +1,8 @@
 package com.aFK;
 
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -13,8 +16,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.PacketType;
 
 public class AFK extends JavaPlugin implements Listener, CommandExecutor {
 
@@ -26,15 +34,36 @@ public class AFK extends JavaPlugin implements Listener, CommandExecutor {
     private boolean detectMoveRotation, detectMovePosition, detectChat, detectCommand, detectMouseClick;
     private double moveSensitivity; // 灵敏度
     private String msgAfkSelf, msgAfkBroadcast, msgBackSelf, msgBackBroadcast;
+    private ProtocolManager protocolManager;
+    private final Map<UUID, Integer> originalClientVD = new HashMap<>();
+    private boolean viewDistanceEnable;
+    private int afkViewDistance;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         loadConfig();
 
+        protocolManager = ProtocolLibrary.getProtocolManager();
+
+        if (viewDistanceEnable) {
+            protocolManager.addPacketListener(new PacketAdapter(
+                    this,
+                    ListenerPriority.NORMAL,
+                    PacketType.Play.Client.SETTINGS
+            ) {
+                @Override
+                public void onPacketReceiving(PacketEvent event) {
+                    int clientVD = event.getPacket().getIntegers().read(0);
+                    originalClientVD.put(event.getPlayer().getUniqueId(), clientVD);
+                }
+            });
+        }
+
         Bukkit.getPluginManager().registerEvents(this, this);
         this.getCommand("afk").setExecutor(this);
         this.getCommand("afkreload").setExecutor(this);
+
 
         new PlaceholderExpansion() {
             @Override
@@ -62,7 +91,7 @@ public class AFK extends JavaPlugin implements Listener, CommandExecutor {
     }
 
     public void loadConfig() {
-        reloadConfig();  // 这是正确的方法
+        reloadConfig();
         afkCheckInterval = getConfig().getInt("afk-check-interval", 300);
         afkPlaceholder = ChatColor.translateAlternateColorCodes('&', getConfig().getString("afk-placeholder", "&c[AFK]"));
         afkGodMode = getConfig().getBoolean("afk-god-mode", false);
@@ -73,6 +102,9 @@ public class AFK extends JavaPlugin implements Listener, CommandExecutor {
         detectCommand = getConfig().getBoolean("detect.command", true);
         detectMouseClick = getConfig().getBoolean("detect.mouse-click", true);  // 鼠标点击
         moveSensitivity = getConfig().getDouble("move-sensitivity", 0.1);  // 获取灵敏度
+
+        viewDistanceEnable = getConfig().getBoolean("view-distance.enable", false);
+        afkViewDistance   = getConfig().getInt("view-distance.afk-view-distance", 4);
 
         msgAfkSelf = color(getConfig().getString("msg-afk-self", "&e你挂机了。"));
         msgAfkBroadcast = color(getConfig().getString("msg-afk-broadcast", "&7%player% 挂机了。"));
@@ -98,9 +130,34 @@ public class AFK extends JavaPlugin implements Listener, CommandExecutor {
         }, 0, 5, TimeUnit.SECONDS);
     }
 
+    private void sendViewDistance(Player player, int distance) {
+        PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.VIEW_DISTANCE);
+        packet.getIntegers().write(0, distance);
+        try {
+            protocolManager.sendServerPacket(player, packet);
+        } catch (Exception e) {
+            getLogger().warning("发送视距包失败: " + e.getMessage());
+        }
+    }
+
     private void setAFK(Player player, boolean afk) {
+        if (player.hasPermission("afk.bypass")) return;
         UUID uuid = player.getUniqueId();
+        boolean wasAfk = isAFK.getOrDefault(uuid, false);
         isAFK.put(uuid, afk);
+
+        if (viewDistanceEnable) {
+            if (afk && !wasAfk) {
+                int orig = originalClientVD.getOrDefault(uuid, Bukkit.getServer().getViewDistance());
+                originalClientVD.putIfAbsent(uuid, orig);
+                sendViewDistance(player, afkViewDistance);
+            } else if (!afk && wasAfk) {
+                int orig = originalClientVD.getOrDefault(uuid, Bukkit.getServer().getViewDistance());
+                sendViewDistance(player, orig);
+                originalClientVD.remove(uuid);
+            }
+        }
+
         if (afk) {
             if (afkGodMode) player.setInvulnerable(true);
             player.sendMessage(msgAfkSelf);
@@ -122,24 +179,25 @@ public class AFK extends JavaPlugin implements Listener, CommandExecutor {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        // 如果不检测位置移动则返回
-        if (!detectMovePosition) return;
-
-        // 获取玩家当前位置与目标位置的X和Z坐标差值
-        double deltaX = event.getTo().getX() - event.getFrom().getX();
-        double deltaZ = event.getTo().getZ() - event.getFrom().getZ();
-
-        // 计算玩家的水平位移（忽略Y轴的变化）
-        double horizontalMovement = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-
-        // 如果水平位移大于灵敏度，则标记为活跃
-        if (horizontalMovement > moveSensitivity) {
-            markActive(event.getPlayer());  // 水平移动，退出AFK
+        // —— 位置移动检测 —— //
+        if (detectMovePosition) {
+            double dx = event.getTo().getX() - event.getFrom().getX();
+            double dz = event.getTo().getZ() - event.getFrom().getZ();
+            double horiz = Math.hypot(dx, dz);
+            if (horiz > moveSensitivity) {
+                markActive(event.getPlayer());
+            }
         }
 
-        // 视角移动检测（不受灵敏度影响）
-        if (detectMoveRotation && !event.getPlayer().getLocation().getDirection().equals(event.getTo().getDirection())) {
-            markActive(event.getPlayer());  // 视角变化检测
+        // —— 视角旋转检测 —— //
+        if (detectMoveRotation) {
+            float fromYaw = event.getFrom().getYaw();
+            float toYaw   = event.getTo().getYaw();
+            float fromPitch = event.getFrom().getPitch();
+            float toPitch   = event.getTo().getPitch();
+            if (fromYaw != toYaw || fromPitch != toPitch) {
+                markActive(event.getPlayer());
+            }
         }
     }
 
@@ -152,12 +210,12 @@ public class AFK extends JavaPlugin implements Listener, CommandExecutor {
 
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-        if (detectCommand) markActive(event.getPlayer());
+        if (detectCommand) markActive(event.getPlayer());  // 命令检测
     }
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        if (detectChat) markActive(event.getPlayer());
+        if (detectChat) markActive(event.getPlayer());  // 聊天检测
     }
 
     @EventHandler
@@ -170,7 +228,7 @@ public class AFK extends JavaPlugin implements Listener, CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (label.equalsIgnoreCase("afkreload")) {
-            if (sender.hasPermission("afk.reload")) {
+            if (sender.hasPermission("afk.command.reload")) {
                 loadConfig();
                 sender.sendMessage(ChatColor.GREEN + "AFK configuration reloaded.");
             } else {
@@ -179,12 +237,23 @@ public class AFK extends JavaPlugin implements Listener, CommandExecutor {
             return true;
         }
 
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            UUID uuid = player.getUniqueId();
-            setAFK(player, !isAFK.getOrDefault(uuid, false));
-            lastActivity.put(uuid, System.currentTimeMillis());
-            return true;
+        if (label.equalsIgnoreCase("afk")) {
+            if (sender instanceof Player) {
+                Player player = (Player) sender;
+
+                if (!player.hasPermission("afk.command.afk")) {
+                    player.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                    return false;
+                }
+
+                UUID uuid = player.getUniqueId();
+                setAFK(player, !isAFK.getOrDefault(uuid, false));
+                lastActivity.put(uuid, System.currentTimeMillis());
+                return true;
+            }
+
+            sender.sendMessage(ChatColor.RED + "Only players can use this command.");
+            return false;
         }
 
         sender.sendMessage(ChatColor.RED + "Only players can use this command.");
