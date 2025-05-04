@@ -21,4 +21,4 @@ Currently implemented features:
 
  - 自定义文本   - Customized messages  
   
-WIKI(To be updated):https://github.com/Tacocat-i/AFK-for-Folia/wiki
+WIKI(To be updated待更新):https://github.com/Tacocat-i/AFK-for-Folia/wiki
