@@ -15,9 +15,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -39,6 +37,21 @@ public class AFK extends JavaPlugin implements Listener, CommandExecutor {
     private boolean viewDistanceEnable;
     private int afkViewDistance;
 
+    private boolean pfNamedSound;
+    private boolean pfParticle;
+    private boolean pfBlockAction;
+    private boolean pfLightUpdate;
+    private boolean pfChunkData;
+    private boolean pfEntityMetadata;
+    private boolean pfEntityVelocity;
+    private boolean pfEntityTeleport;
+    private boolean pfBlockChange;
+    private boolean pfScoreboard;
+    private boolean pfRelMove;
+    private boolean pfEntityLook;
+    private boolean pfEntityMoveLook;
+    private boolean pfHeadRot;
+
     @Override
     public void onEnable() {
         saveDefaultConfig();
@@ -56,6 +69,39 @@ public class AFK extends JavaPlugin implements Listener, CommandExecutor {
                 public void onPacketReceiving(PacketEvent event) {
                     int clientVD = event.getPacket().getIntegers().read(0);
                     originalClientVD.put(event.getPlayer().getUniqueId(), clientVD);
+                }
+            });
+        }
+
+        List<PacketType> toIntercept = new ArrayList<>();
+        if (pfNamedSound)     toIntercept.add(PacketType.Play.Server.NAMED_SOUND_EFFECT);
+        if (pfParticle)       toIntercept.add(PacketType.Play.Server.WORLD_PARTICLES);
+        if (pfBlockAction)    toIntercept.add(PacketType.Play.Server.BLOCK_ACTION);
+        if (pfLightUpdate)    toIntercept.add(PacketType.Play.Server.LIGHT_UPDATE);
+        if (pfChunkData)      toIntercept.add(PacketType.Play.Server.MAP_CHUNK);
+        if (pfEntityMetadata) toIntercept.add(PacketType.Play.Server.ENTITY_METADATA);
+        if (pfEntityVelocity) toIntercept.add(PacketType.Play.Server.ENTITY_VELOCITY);
+        if (pfEntityTeleport) toIntercept.add(PacketType.Play.Server.ENTITY_TELEPORT);
+        if (pfBlockChange)    toIntercept.add(PacketType.Play.Server.BLOCK_CHANGE);
+        if (pfScoreboard) {
+            toIntercept.add(PacketType.Play.Server.SCOREBOARD_OBJECTIVE);
+            toIntercept.add(PacketType.Play.Server.SCOREBOARD_SCORE);
+        }
+        if (pfRelMove)        toIntercept.add(PacketType.Play.Server.REL_ENTITY_MOVE);
+        if (pfEntityLook)     toIntercept.add(PacketType.Play.Server.ENTITY_LOOK);
+        if (pfEntityMoveLook) toIntercept.add(PacketType.Play.Server.ENTITY_MOVE_LOOK);
+        if (pfHeadRot)        toIntercept.add(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
+
+        if (!toIntercept.isEmpty()) {
+            protocolManager.addPacketListener(new PacketAdapter(
+                    this, ListenerPriority.LOWEST,
+                    toIntercept.toArray(new PacketType[0])
+            ) {
+                @Override
+                public void onPacketSending(PacketEvent event) {
+                    if (isAFK.getOrDefault(event.getPlayer().getUniqueId(), false)) {
+                        event.setCancelled(true);
+                    }
                 }
             });
         }
@@ -105,6 +151,24 @@ public class AFK extends JavaPlugin implements Listener, CommandExecutor {
 
         viewDistanceEnable = getConfig().getBoolean("view-distance.enable", false);
         afkViewDistance   = getConfig().getInt("view-distance.afk-view-distance", 4);
+
+        pfNamedSound      = getConfig().getBoolean("packet-filter.named-sound", true);
+        pfParticle        = getConfig().getBoolean("packet-filter.particle", true);
+        pfBlockAction     = getConfig().getBoolean("packet-filter.block-action", true);
+        pfLightUpdate     = getConfig().getBoolean("packet-filter.light-update", true);
+
+        pfChunkData       = getConfig().getBoolean("packet-filter.chunk-data", false);
+        pfEntityMetadata  = getConfig().getBoolean("packet-filter.entity-metadata", false);
+        pfEntityVelocity  = getConfig().getBoolean("packet-filter.entity-velocity", false);
+        pfEntityTeleport  = getConfig().getBoolean("packet-filter.entity-teleport", false);
+        pfBlockChange     = getConfig().getBoolean("packet-filter.block-change", false);
+        pfScoreboard      = getConfig().getBoolean("packet-filter.scoreboard", false);
+
+        pfRelMove       = getConfig().getBoolean("packet-filter.entity-rel-move", true);
+        pfEntityLook    = getConfig().getBoolean("packet-filter.entity-look", true);
+        pfEntityMoveLook= getConfig().getBoolean("packet-filter.entity-move-look", true);
+        pfHeadRot       = getConfig().getBoolean("packet-filter.entity-head-rot", true);
+
 
         msgAfkSelf = color(getConfig().getString("msg-afk-self", "&e你挂机了。"));
         msgAfkBroadcast = color(getConfig().getString("msg-afk-broadcast", "&7%player% 挂机了。"));

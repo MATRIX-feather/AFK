@@ -8,11 +8,30 @@ detect:  # 检测哪些内容来判断
 move-sensitivity: 2  # 水平位移的灵敏度（防止误判）
 
 afk-check-interval: 300  # AFK检测间隔（秒）
-afk-placeholder: "&o&8[AFK]"  # %isAFK%占位符显示内容
+afk-placeholder: "&8&o&o[AFK]"  # %isAFK%占位符显示内容
 afk-god-mode: false  # 玩家AFK时是否无敌
+
 view-distance:
   enable: true               # 是否在 AFK 时调整视距
   afk-view-distance: 4       # AFK 时的视距（区块数）
+
+packet-filter:
+  named-sound:       true  # 拦截 音效包（怪物叫声、脚步声、环境音效）
+  particle:          true  # 拦截 粒子效果包（火焰、烟雾、爆炸、灰尘、水花等）
+  block-action:      true  # 拦截 方块动作更新（音符盒播放状态、容器打开/关闭动画、活塞伸缩等）
+  light-update:      true  # 拦截 光照更新包（区块内部或天空光照变化）
+
+  chunk-data:        false  # 拦截 完整区块数据（客户端将不会加载新区块或区块重载）
+  entity-metadata:   false  # 拦截 实体元数据更新（生命状态、盔甲、名称标签、不可碰撞标志等）
+  entity-velocity:   false  # 拦截 实体速度/推力包（击退或爆炸冲击力）
+  entity-teleport:   false  # 拦截 实体瞬移包（如命令或插件强制传送）
+  block-change:      false  # 拦截 单块更改包（一个方块被放置、破坏、状态更新）
+  scoreboard:        false  # 拦截 计分板相关更新（添加/移除记分板目标、分数变化）
+
+  entity-rel-move:   false  # 拦截 实体相对移动包（实体的小范围平移，如怪物行走或移动时的位置更新）
+  entity-look:       false  # 拦截 实体朝向更新包（同步实体身体的转向 Yaw/Pitch，使其看向不同方向）
+  entity-move-look:  false  # 拦截 移动+朝向合并包（一次性包含相对移动和朝向更新，部分版本用此提升效率）
+  entity-head-rot:   false  # 拦截 实体头部旋转包（仅更新实体头部朝向，例如盔甲架或玩家头部转动）
 
 msg-afk-self: "&e你挂机了。"
 msg-afk-broadcast: "&7%player% 挂机了。"
