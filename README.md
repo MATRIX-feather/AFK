@@ -27,4 +27,4 @@ Currently implemented features:
  - 自定义消息   - Customized messages
 
   
-WIKI(To be updated待更新):https://github.com/Tacocat-i/AFK-for-Folia/wiki
+WIKI(To be updated待完善):https://github.com/Tacocat-i/AFK-for-Folia/wiki
