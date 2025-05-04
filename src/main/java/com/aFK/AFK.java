@@ -36,6 +36,7 @@ public class AFK extends JavaPlugin implements Listener, CommandExecutor {
     private final Map<UUID, Integer> originalClientVD = new HashMap<>();
     private boolean viewDistanceEnable;
     private int afkViewDistance;
+    private int originalViewDistance;
 
     private boolean pfNamedSound;
     private boolean pfParticle;
@@ -58,6 +59,7 @@ public class AFK extends JavaPlugin implements Listener, CommandExecutor {
         loadConfig();
 
         protocolManager = ProtocolLibrary.getProtocolManager();
+        originalViewDistance = Bukkit.getServer().getViewDistance();
 
         if (viewDistanceEnable) {
             protocolManager.addPacketListener(new PacketAdapter(
@@ -212,13 +214,13 @@ public class AFK extends JavaPlugin implements Listener, CommandExecutor {
 
         if (viewDistanceEnable) {
             if (afk && !wasAfk) {
-                int orig = originalClientVD.getOrDefault(uuid, Bukkit.getServer().getViewDistance());
+                int orig = player.getSendViewDistance();
                 originalClientVD.putIfAbsent(uuid, orig);
-                sendViewDistance(player, afkViewDistance);
+                player.setSendViewDistance(afkViewDistance);
             } else if (!afk && wasAfk) {
-                int orig = originalClientVD.getOrDefault(uuid, Bukkit.getServer().getViewDistance());
-                sendViewDistance(player, orig);
-                originalClientVD.remove(uuid);
+                int saved = originalClientVD.remove(uuid);
+                player.setSendViewDistance(saved);
+                sendViewDistance(player, saved);
             }
         }
 
