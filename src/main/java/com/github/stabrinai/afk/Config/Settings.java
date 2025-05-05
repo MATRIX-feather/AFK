@@ -1,0 +1,132 @@
+package com.github.stabrinai.afk.Config;
+
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+import com.github.stabrinai.afk.Afk;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class Settings {
+
+    private final Afk plugin;
+
+    private int afkCheckInterval;
+    private String afkPlaceholder;
+    private boolean afkGodMode;
+
+    private boolean detectMoveRotation;
+    private boolean detectMovePosition;
+    private boolean detectChat;
+    private boolean detectCommand;
+    private boolean detectMouseClick;
+
+    private double moveSensitivity;
+
+    private String msgAfkSelf;
+    private String msgAfkBroadcast;
+    private String msgBackSelf;
+    private String msgBackBroadcast;
+
+    private List<String> packetBlacklist;
+    private final Set<PacketTypeCommon> blacklist = new HashSet<>();
+
+    public Settings(Afk plugin) {
+        this.plugin = plugin;
+    }
+
+    public void loadConfig() {
+        plugin.reloadConfig();
+
+        afkCheckInterval = plugin.getConfig().getInt("afk-check-interval", 300);
+        afkPlaceholder = plugin.getConfig().getString("afk-placeholder", "&c[AFK]");
+        afkGodMode = plugin.getConfig().getBoolean("afk-god-mode", false);
+
+        detectMoveRotation = plugin.getConfig().getBoolean("detect.move-rotation", true);
+        detectMovePosition = plugin.getConfig().getBoolean("detect.move-position", true);
+        detectChat = plugin.getConfig().getBoolean("detect.chat", true);
+        detectCommand = plugin.getConfig().getBoolean("detect.command", true);
+        detectMouseClick = plugin.getConfig().getBoolean("detect.mouse-click", true);
+        moveSensitivity = plugin.getConfig().getDouble("move-sensitivity", 0.1);
+
+        packetBlacklist = plugin.getConfig().getStringList("packet-blacklist");
+
+        msgAfkSelf = plugin.getConfig().getString("msg-afk-self", "<yellow>你挂机了。");
+        msgAfkBroadcast = plugin.getConfig().getString("msg-afk-broadcast", "<gray>%player% 挂机了。");
+        msgBackSelf = plugin.getConfig().getString("msg-back-self", "<green>欢迎回来！");
+        msgBackBroadcast = plugin.getConfig().getString("msg-back-broadcast", "<gray>%player% 回来了。");
+
+        updatePacketBlacklist();
+    }
+
+    public int getAfkCheckInterval() {
+        return afkCheckInterval;
+    }
+
+    public String getAfkPlaceholder() {
+        return afkPlaceholder;
+    }
+
+    public boolean isAfkGodMode() {
+        return afkGodMode;
+    }
+
+    // 探测行为检测
+    public boolean isDetectMoveRotation() {
+        return detectMoveRotation;
+    }
+
+    public boolean isDetectMovePosition() {
+        return detectMovePosition;
+    }
+
+    public boolean isDetectChat() {
+        return detectChat;
+    }
+
+    public boolean isDetectCommand() {
+        return detectCommand;
+    }
+
+    public boolean isDetectMouseClick() {
+        return detectMouseClick;
+    }
+
+    public double getMoveSensitivity() {
+        return moveSensitivity;
+    }
+
+    // 消息文本
+    public String getMsgAfkSelf() {
+        return msgAfkSelf;
+    }
+
+    public String getMsgAfkBroadcast() {
+        return msgAfkBroadcast;
+    }
+
+    public String getMsgBackSelf() {
+        return msgBackSelf;
+    }
+
+    public String getMsgBackBroadcast() {
+        return msgBackBroadcast;
+    }
+
+    // 数据包过滤设置
+    public Set<PacketTypeCommon> getPacketBlacklist() {
+        return blacklist;
+    }
+    public Set<PacketTypeCommon> updatePacketBlacklist() {
+        blacklist.clear();
+        for (var name : packetBlacklist) {
+            Arrays.stream(PacketType.Play.Server.values())
+                    .filter(p -> p.getName().equalsIgnoreCase(name))
+                    .findFirst().ifPresent(blacklist::add);
+        }
+        return blacklist;
+    }
+
+}
