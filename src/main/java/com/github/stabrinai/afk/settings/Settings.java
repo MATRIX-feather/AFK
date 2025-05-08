@@ -1,8 +1,8 @@
-package com.github.stabrinai.afk.Config;
+package com.github.stabrinai.afk.settings;
 
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
-import com.github.stabrinai.afk.Afk;
+import com.github.stabrinai.afk.afk;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class Settings {
 
-    private final Afk plugin;
+    private final afk plugin;
 
     private int afkCheckInterval;
     private String afkPlaceholder;
@@ -29,15 +29,18 @@ public class Settings {
     private String msgAfkBroadcast;
     private String msgBackSelf;
     private String msgBackBroadcast;
+    private String msgReloadConfig;
 
     private List<String> packetBlacklist;
     private final Set<PacketTypeCommon> blacklist = new HashSet<>();
 
-    public Settings(Afk plugin) {
+    public Settings(afk plugin) {
         this.plugin = plugin;
     }
 
     public void loadConfig() {
+        plugin.saveDefaultConfig();
+
         plugin.reloadConfig();
 
         afkCheckInterval = plugin.getConfig().getInt("afk-check-interval", 300);
@@ -53,10 +56,11 @@ public class Settings {
 
         packetBlacklist = plugin.getConfig().getStringList("packet-blacklist");
 
-        msgAfkSelf = plugin.getConfig().getString("msg-afk-self", "<yellow>你挂机了。");
-        msgAfkBroadcast = plugin.getConfig().getString("msg-afk-broadcast", "<gray>%player% 挂机了。");
-        msgBackSelf = plugin.getConfig().getString("msg-back-self", "<green>欢迎回来！");
-        msgBackBroadcast = plugin.getConfig().getString("msg-back-broadcast", "<gray>%player% 回来了。");
+        msgAfkSelf = plugin.getConfig().getString("message.afk-self");
+        msgAfkBroadcast = plugin.getConfig().getString("message.afk-broadcast");
+        msgBackSelf = plugin.getConfig().getString("message.back-self");
+        msgBackBroadcast = plugin.getConfig().getString("message.back-broadcast");
+        msgReloadConfig = plugin.getConfig().getString("message.afk-reload");
 
         updatePacketBlacklist();
     }
@@ -115,18 +119,22 @@ public class Settings {
         return msgBackBroadcast;
     }
 
-    // 数据包过滤设置
+    public String getMsgReloadConfig() {
+        return msgReloadConfig;
+    }
+
+    // 获取屏蔽的数据包
     public Set<PacketTypeCommon> getPacketBlacklist() {
         return blacklist;
     }
-    public Set<PacketTypeCommon> updatePacketBlacklist() {
+
+    // 更新屏蔽列表
+    public void updatePacketBlacklist() {
         blacklist.clear();
         for (var name : packetBlacklist) {
             Arrays.stream(PacketType.Play.Server.values())
                     .filter(p -> p.getName().equalsIgnoreCase(name))
                     .findFirst().ifPresent(blacklist::add);
         }
-        return blacklist;
     }
-
 }

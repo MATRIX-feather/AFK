@@ -1,15 +1,15 @@
-package com.github.stabrinai.afk.Utils;
+package com.github.stabrinai.afk.utils;
 
-import com.github.stabrinai.afk.Afk;
+import com.github.stabrinai.afk.afk;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.TimeUnit;
 
 public class CheckTask {
-    private final Afk plugin;
+    private final afk plugin;
 
-    public CheckTask(Afk plugin) {
+    public CheckTask(afk plugin) {
         this.plugin = plugin;
         startAFKCheckTask();
     }
@@ -18,10 +18,10 @@ public class CheckTask {
         Bukkit.getAsyncScheduler().runAtFixedRate(plugin, task -> {
             long now = System.currentTimeMillis();
             for (Player player : Bukkit.getOnlinePlayers()) {
-                plugin.getLastActivity().putIfAbsent(player.getUniqueId(), now);
+                plugin.getManager().getLastActivity().putIfAbsent(player.getUniqueId(), now);
 
-                if (!plugin.isAfkPlayer(player) && now - plugin.getLastActivity().get(player.getUniqueId()) > plugin.getSettings().getAfkCheckInterval() * 1000L) {
-                    plugin.addAfkPlayer(player);
+                if (!plugin.getManager().isAfkPlayer(player) && now - plugin.getManager().getLastActivity().get(player.getUniqueId()) > plugin.getSettings().getAfkCheckInterval() * 1000L) {
+                    plugin.getManager().addAfkPlayer(player);
                 }
             }
         }, 0, 5, TimeUnit.SECONDS);

@@ -1,6 +1,6 @@
 name: afk
 version: ${version}
-main: com.github.stabrinai.afk.Afk
+main: com.github.stabrinai.afk.afk
 api-version: '1.21'
 softdepend: [PlaceholderAPI]
 depend: [packetevents]

@@ -1,15 +1,16 @@
-package com.github.stabrinai.afk.Commands;
+package com.github.stabrinai.afk.commands;
 
-import com.github.stabrinai.afk.Afk;
+import com.github.stabrinai.afk.afk;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 
 public class afkreloadCommand {
-    public static LiteralCommandNode<CommandSourceStack> register(Afk plugin) {
+    public static LiteralCommandNode<CommandSourceStack> register(afk plugin) {
         return Commands.literal("afkreload").requires(ctx -> ctx.getSender().hasPermission("afk.reload"))
                 .executes(ctx -> {
                     plugin.getSettings().loadConfig();
+                    plugin.getManager().sendRichMessage(ctx.getSource().getSender(), plugin.getSettings().getMsgReloadConfig());
                     return 1;
                 }).build();
     }

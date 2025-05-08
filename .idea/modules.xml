@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/afk.main.iml" filepath="$PROJECT_DIR$/.idea/modules/afk.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.github.stabrinai.afk.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.github.stabrinai.afk.main.iml" />
     </modules>
   </component>
 </project>

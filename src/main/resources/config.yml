@@ -27,10 +27,12 @@ packet-blacklist:
   - ENTITY_HEAD_LOOK
   - ENTITY_RELATIVE_MOVE_AND_ROTATION
   - ENTITY_ROTATION
-  - MULTI_BLOCK_CHANGE
   - ENTITY_POSITION_SYNC
+  # - MULTI_BLOCK_CHANGE
 
-msg-afk-self: "<yellow>你挂机了。"
-msg-afk-broadcast: "<gray>%player% 挂机了。"
-msg-back-self: "<green>欢迎回来！"
-msg-back-broadcast: "<gray>%player% 回来了。"
+message:
+  afk-self: "<yellow>你挂机了。"
+  afk-broadcast: "<gray>%player% 挂机了。"
+  back-self: "<green>欢迎回来！"
+  back-broadcast: "<gray>%player% 回来了。"
+  afk-reload: "<green>插件已成功重载."

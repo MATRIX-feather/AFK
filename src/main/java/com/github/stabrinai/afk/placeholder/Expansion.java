@@ -1,14 +1,14 @@
-package com.github.stabrinai.afk.Placeholder;
+package com.github.stabrinai.afk.placeholder;
 
-import com.github.stabrinai.afk.Afk;
+import com.github.stabrinai.afk.afk;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class Expansion extends PlaceholderExpansion {
-    private final Afk plugin;
+    private final afk plugin;
 
-    public Expansion(Afk plugin) {
+    public Expansion(afk plugin) {
         this.plugin = plugin;
     }
 
@@ -29,7 +29,7 @@ public class Expansion extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player player, @NotNull String identifier) {
-        return plugin.isAfkPlayer(player) ? plugin.getSettings().getAfkPlaceholder() : "";
+        return plugin.getManager().isAfkPlayer(player) ? plugin.getSettings().getAfkPlaceholder() : "";
     }
 
 }
