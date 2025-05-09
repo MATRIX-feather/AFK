@@ -22,6 +22,8 @@ public class PlayerManager implements afk {
 
     @Override
     public void addAfkPlayer(Player player) {
+        if (player == null) return;
+
         if (afkPlayerList.containsKey(player.getUniqueId())) return;
 
         afkPlayerList.put(player.getUniqueId(), System.currentTimeMillis());
@@ -37,6 +39,8 @@ public class PlayerManager implements afk {
 
     @Override
     public void removeAfkPlayer(Player player) {
+        if (player == null) return;
+
         if (!afkPlayerList.containsKey(player.getUniqueId())) return;
 
         afkPlayerList.remove(player.getUniqueId());
@@ -53,6 +57,8 @@ public class PlayerManager implements afk {
 
     @Override
     public void toggleAfkPlayer(Player player) {
+        if (player == null) return;
+
         if (!isAfkPlayer(player)) {
             addAfkPlayer(player);
         } else {
@@ -62,6 +68,8 @@ public class PlayerManager implements afk {
 
     @Override
     public boolean isAfkPlayer(Player player) {
+        if (player == null) return false;
+
         if (afkPlayerList.isEmpty()) return false;
         return afkPlayerList.containsKey(player.getUniqueId());
     }

@@ -8,7 +8,9 @@ detect:  # 检测哪些内容来判断
 move-sensitivity: 2  # 水平位移的灵敏度（防止误判）
 
 afk-check-interval: 300  # AFK检测间隔（秒）
-afk-placeholder: "&8&o&o[AFK]"  # %isAFK%占位符显示内容
+afk-placeholder: # %afk% 占位符显示内容
+  true: "&8&o&o[AFK]" # AFK时显示
+  false: "" # 非AFK时显示
 afk-god-mode: false  # 玩家AFK时是否无敌
 
 packet-blacklist:

@@ -22,14 +22,14 @@ public class Expansion extends PlaceholderExpansion {
     public String getAuthor() { return "AFKFolia"; }
 
     @Override
-    public String getIdentifier() { return "isAFK"; }
+    public String getIdentifier() { return "afk"; }
 
     @Override
     public String getVersion() { return "1.0"; }
 
     @Override
     public String onPlaceholderRequest(Player player, @NotNull String identifier) {
-        return plugin.getManager().isAfkPlayer(player) ? plugin.getSettings().getAfkPlaceholder() : "";
+        return plugin.getManager().isAfkPlayer(player) ? plugin.getSettings().getAfkPlaceholderTrue() : plugin.getSettings().getAfkPlaceholderFalse();
     }
 
 }

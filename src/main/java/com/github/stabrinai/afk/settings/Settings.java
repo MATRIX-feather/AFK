@@ -14,7 +14,8 @@ public class Settings {
     private final afk plugin;
 
     private int afkCheckInterval;
-    private String afkPlaceholder;
+    private String afkPlaceholderTrue;
+    private String afkPlaceholderFalse;
     private boolean afkGodMode;
 
     private boolean detectMoveRotation;
@@ -44,7 +45,8 @@ public class Settings {
         plugin.reloadConfig();
 
         afkCheckInterval = plugin.getConfig().getInt("afk-check-interval", 300);
-        afkPlaceholder = plugin.getConfig().getString("afk-placeholder", "&c[AFK]");
+        afkPlaceholderTrue = plugin.getConfig().getString("afk-placeholder.true", "&c[AFK]");
+        afkPlaceholderFalse = plugin.getConfig().getString("afk-placeholder.false", "&c[AFK]");
         afkGodMode = plugin.getConfig().getBoolean("afk-god-mode", false);
 
         detectMoveRotation = plugin.getConfig().getBoolean("detect.move-rotation", true);
@@ -69,8 +71,12 @@ public class Settings {
         return afkCheckInterval;
     }
 
-    public String getAfkPlaceholder() {
-        return afkPlaceholder;
+    public String getAfkPlaceholderTrue() {
+        return afkPlaceholderTrue;
+    }
+
+    public String getAfkPlaceholderFalse() {
+        return afkPlaceholderFalse;
     }
 
     public boolean isAfkGodMode() {
