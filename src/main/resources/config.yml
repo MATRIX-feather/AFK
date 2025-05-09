@@ -9,7 +9,7 @@ move-sensitivity: 2  # 水平位移的灵敏度（防止误判）
 
 afk-check-interval: 300  # AFK检测间隔（秒）
 afk-placeholder: # %afk% 占位符显示内容
-  true: "&8&o&o[AFK]" # AFK时显示
+  true: "&c[AFK]" # AFK时显示
   false: "" # 非AFK时显示
 afk-god-mode: false  # 玩家AFK时是否无敌
 
@@ -32,7 +32,7 @@ packet-blacklist:
   - ENTITY_POSITION_SYNC
   # - MULTI_BLOCK_CHANGE
 
-message:
+message: # 支持MiniMessage格式, 留空以禁用
   afk-self: "<yellow>你挂机了。"
   afk-broadcast: "<gray>%player% 挂机了。"
   back-self: "<green>欢迎回来！"

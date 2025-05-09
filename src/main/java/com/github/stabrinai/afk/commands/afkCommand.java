@@ -21,7 +21,7 @@ public class afkCommand {
                     }
                     return 1;
                 })
-
+                .requires(ctx -> ctx.getSender().hasPermission("afk.command.others"))
                 .then(Commands.argument("players", ArgumentTypes.players())
                         .executes(ctx -> {
                             final PlayerSelectorArgumentResolver targetResolver = ctx.getArgument("players", PlayerSelectorArgumentResolver.class);

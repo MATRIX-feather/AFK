@@ -23,6 +23,7 @@ public class PlayerManager implements afk {
     @Override
     public void addAfkPlayer(Player player) {
         if (player == null) return;
+        if (player.hasPermission("afk.bypass")) return;
 
         if (afkPlayerList.containsKey(player.getUniqueId())) return;
 
@@ -51,8 +52,7 @@ public class PlayerManager implements afk {
                 sendRichMessage(p, settings.getMsgBackBroadcast().replace("%player%", player.getName()));
         }
 
-
-        player.setInvulnerable(false);
+        if (settings.isAfkGodMode()) player.setInvulnerable(false);
     }
 
     @Override
