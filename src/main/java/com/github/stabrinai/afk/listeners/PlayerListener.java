@@ -5,10 +5,7 @@ import com.github.stabrinai.afk.settings.Settings;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 
 public class PlayerListener implements Listener {
     private final afk plugin;
@@ -69,5 +66,11 @@ public class PlayerListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         if (!plugin.getManager().isAfkPlayer(event.getPlayer())) return;
         plugin.getManager().markActive(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onPlayerFish(PlayerFishEvent event) {
+        if (!plugin.getManager().isAfkPlayer(event.getPlayer())) return;
+        if (settings.isDetectFish()) plugin.getManager().markActive(event.getPlayer());
     }
 }

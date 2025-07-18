@@ -21,6 +21,7 @@ public class Settings {
     private boolean detectMoveRotation;
     private boolean detectMovePosition;
     private boolean detectChat;
+    private boolean detectFish;
     private boolean detectCommand;
     private boolean detectMouseClick;
 
@@ -51,6 +52,7 @@ public class Settings {
 
         detectMoveRotation = plugin.getConfig().getBoolean("detect.move-rotation", true);
         detectMovePosition = plugin.getConfig().getBoolean("detect.move-position", true);
+        detectFish = plugin.getConfig().getBoolean("detect.fish", true);
         detectChat = plugin.getConfig().getBoolean("detect.chat", true);
         detectCommand = plugin.getConfig().getBoolean("detect.command", true);
         detectMouseClick = plugin.getConfig().getBoolean("detect.mouse-click", true);
@@ -94,6 +96,10 @@ public class Settings {
 
     public boolean isDetectChat() {
         return detectChat;
+    }
+
+    public boolean isDetectFish() {
+        return detectFish;
     }
 
     public boolean isDetectCommand() {

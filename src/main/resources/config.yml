@@ -4,6 +4,7 @@ detect:  # 检测哪些内容来判断
   chat: false  # 发送聊天
   command: true  # 发送指令
   mouse-click: true  # 鼠标点击
+  fish: true  # 钓鱼事件
 
 move-sensitivity: 2  # 水平位移的灵敏度（防止误判）
 

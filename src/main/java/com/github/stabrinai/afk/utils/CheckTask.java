@@ -20,7 +20,7 @@ public class CheckTask {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 plugin.getManager().getLastActivity().putIfAbsent(player.getUniqueId(), now);
 
-                if (!plugin.getManager().isAfkPlayer(player) && now - plugin.getManager().getLastActivity().get(player.getUniqueId()) > plugin.getSettings().getAfkCheckInterval() * 1000L) {
+                if (!plugin.getManager().isAfkPlayer(player) && (now - plugin.getManager().getLastActivity().get(player.getUniqueId())) > plugin.getSettings().getAfkCheckInterval() * 1000L) {
                     plugin.getManager().addAfkPlayer(player);
                 }
             }
