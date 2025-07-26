@@ -1,7 +1,6 @@
-package com.github.stabrinai.afk.managers;
+package com.github.stabrinai.afkplugin.managers;
 
-import com.github.stabrinai.afk.api.afk;
-import com.github.stabrinai.afk.settings.Settings;
+import com.github.stabrinai.afkplugin.settings.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -9,7 +8,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class PlayerManager implements afk {
+public class PlayerManager implements com.github.stabrinai.afkplugin.api.PlayerManager {
     HashMap<UUID, Long> afkPlayerList = new HashMap<>();
     HashMap<UUID, Long> lastActivity = new HashMap<>();
 

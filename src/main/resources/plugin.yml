@@ -1,6 +1,7 @@
 name: afk
 version: ${version}
-main: com.github.stabrinai.afk.afk
+authors: ["Tacocat-i", "Stabrinai"]
+main: com.github.stabrinai.afkplugin.afk
 api-version: '1.21'
 folia-supported: true
 softdepend: [PlaceholderAPI]

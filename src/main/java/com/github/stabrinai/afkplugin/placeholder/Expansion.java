@@ -1,6 +1,6 @@
-package com.github.stabrinai.afk.placeholder;
+package com.github.stabrinai.afkplugin.placeholder;
 
-import com.github.stabrinai.afk.afk;
+import com.github.stabrinai.afkplugin.afk;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

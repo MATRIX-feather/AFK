@@ -1,8 +1,8 @@
-package com.github.stabrinai.afk.settings;
+package com.github.stabrinai.afkplugin.settings;
 
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
-import com.github.stabrinai.afk.afk;
+import com.github.stabrinai.afkplugin.afk;
 
 import java.util.Arrays;
 import java.util.HashSet;

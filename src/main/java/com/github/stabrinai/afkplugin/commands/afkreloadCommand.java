@@ -1,6 +1,6 @@
-package com.github.stabrinai.afk.commands;
+package com.github.stabrinai.afkplugin.commands;
 
-import com.github.stabrinai.afk.afk;
+import com.github.stabrinai.afkplugin.afk;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;

@@ -1,11 +1,11 @@
-package com.github.stabrinai.afk.api;
+package com.github.stabrinai.afkplugin.api;
 
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-public interface afk {
+public interface PlayerManager {
 
     void addAfkPlayer(Player player);
 

@@ -1,8 +1,8 @@
-package com.github.stabrinai.afk.listeners;
+package com.github.stabrinai.afkplugin.listeners;
 
 import com.github.retrooper.packetevents.event.PacketSendEvent;
-import com.github.stabrinai.afk.afk;
-import com.github.stabrinai.afk.settings.Settings;
+import com.github.stabrinai.afkplugin.afk;
+import com.github.stabrinai.afkplugin.settings.Settings;
 import org.jetbrains.annotations.NotNull;
 
 public class PacketListener implements com.github.retrooper.packetevents.event.PacketListener {
